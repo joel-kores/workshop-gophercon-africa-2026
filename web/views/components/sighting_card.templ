@@ -2,64 +2,59 @@ package components
 
 import (
 	"cmp"
-	"fmt"
-	"slices"
 	"strings"
-
 	"workshop/internal/domain/sighting"
 	"workshop/internal/domain/species"
 )
 
 templ SightingCard(s sighting.Sighting) {
 	<article class="card">
-		<!-- Header -->
-		<header class="card__header">
-			<h2>{ displayName(s.Species) }</h2>
+		<div class="card-photo">
+			if photo := firstPhoto(s.Media); photo.URL != "" {
+				<img src={ templ.URL(photo.URL) } alt={ cmp.Or(photo.Title, "Wildlife observation: "+displayName(s.Species)) } loading="lazy"/>
+				if photo.Creator != "" {
+					<span class="photo-credit">Photo: { photo.Creator }</span>
+				}
+			} else {
+				<div class="photo-placeholder"><img src="/assets/images/logo.svg" alt="" width="72" height="72"/><span>A moment in the wild</span><small>No photograph recorded</small></div>
+			}
+			<span class="location-tag">{ cmp.Or(s.Location.Country, "Kenya") }</span>
+		</div>
+		<div class="card-body">
+			<p class="card-date">{ s.HappenedAt.Format("02 January 2006") }</p>
+			<h3>{ displayName(s.Species) }</h3>
 			if s.Species.ScientificName != "" {
-				<p class="card__scientific">{ s.Species.ScientificName }</p>
+				<p class="card-scientific">{ s.Species.ScientificName }</p>
 			}
-		</header>
-		<!-- Meta -->
-		<dl class="card__meta">
-			<dt>Seen</dt>
-			<dd>{ s.HappenedAt.Format("2 January 2006") }</dd>
-			<dt>Where</dt>
-			<dd>{ place(s.Location) }</dd>
+			<p class="card-place">{ place(s.Location) }</p>
+			<div class="card-observer"><span>Observed by</span><p>{ cmp.Or(s.RecordedBy, "Observer not recorded") }</p></div>
 			if s.IndividualCount != nil {
-				<dt>Count</dt>
-				<dd>{ individuals(*s.IndividualCount) }</dd>
+				<p class="individuals">{ *s.IndividualCount } individuals recorded</p>
 			}
-			if s.RecordedBy != "" {
-				<dt>Recorded by</dt>
-				<dd>{ s.RecordedBy }</dd>
-			}
-		</dl>
-		<!-- Gallery -->
-		<div class="card__gallery">
-			@Gallery(s.Media)
 		</div>
 	</article>
 }
 
-// displayName prefers the name a reader would recognise, falling back
-// through the taxonomy as GBIF records thin out.
 func displayName(sp species.Species) string {
 	return cmp.Or(sp.VernacularName, sp.CanonicalName, sp.ScientificName, "Unknown species")
 }
-
-// place joins whichever parts of the location GBIF supplied.
 func place(l sighting.Location) string {
-	parts := slices.DeleteFunc(
-		[]string{l.Locality, l.StateProvince, l.Country},
-		func(s string) bool { return s == "" },
-	)
+	parts := []string{}
+	for _, part := range []string{l.Locality, l.StateProvince, l.Country} {
+		if part != "" {
+			parts = append(parts, part)
+		}
+	}
 	return cmp.Or(strings.Join(parts, ", "), "Location unknown")
 }
-
-// individuals renders how many animals were seen in a single sighting.
-func individuals(n int) string {
-	if n == 1 {
-		return "1 individual"
+func firstPhoto(media []sighting.Media) sighting.Media {
+	for _, m := range media {
+		if m.Type == "StillImage" && m.URL != "" {
+			return m
+		}
 	}
-	return fmt.Sprintf("%d individuals", n)
+	return sighting.Media{}
+}
+func SearchText(s sighting.Sighting) string {
+	return strings.ToLower(strings.Join([]string{displayName(s.Species), s.Species.ScientificName, place(s.Location), s.RecordedBy}, " "))
 }

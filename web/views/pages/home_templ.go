@@ -47,35 +47,48 @@ func Home(sightings []sighting.Sighting) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>Sightings</h1>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"hero\" aria-labelledby=\"hero-title\"><img class=\"hero-photo\" src=\"https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=2400&q=85\" alt=\"Warm evening light over an African savannah landscape\" fetchpriority=\"high\"><div class=\"hero-shade\"></div><div class=\"hero-content wrap\"><p class=\"eyebrow\"><span></span> KENYA. MORE THAN A DESTINATION.</p><h1 id=\"hero-title\">Some places stay<br>with you.<br><em>Kenya changes you.</em></h1><p class=\"hero-description\">The hush before a lion’s roar. The warmth of a golden horizon. Step into a world that feels beautifully, wildly alive.</p><a class=\"button\" href=\"#sightings\">Explore the wild <span aria-hidden=\"true\">↗</span></a></div><div class=\"hero-bottom wrap\"><span>0° 01′ S &nbsp; 37° 54′ E <small>A LITTLE CLOSER TO WONDER</small></span><a href=\"#experience\">Scroll to discover ↓</a></div></section><section id=\"experience\" class=\"intro wrap section\"><div><p class=\"eyebrow\">THIS IS YOUR CALL TO THE WILD</p><h2>Extraordinary by nature.<br><em>Unforgettable by feeling.</em></h2></div><div class=\"intro-copy\"><p>From open savannahs to mountain silhouettes, Kenya invites you to slow down, look closer, and rediscover your sense of wonder.</p><a class=\"text-link\" href=\"#sightings\">Meet the wildlife that makes it magical ↗</a></div></section><section id=\"sightings\" class=\"wildlife section\"><div class=\"wrap\"><div class=\"section-heading\"><div><p class=\"eyebrow\">ENCOUNTERS WORTH REMEMBERING</p><h2>The wild, <em>as witnessed.</em></h2></div><p>Real wildlife observations from Kenya.<br>Every sighting has a story.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if len(sightings) == 0 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p>No sightings have been ingested yet.</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"empty-state\"><h3>The wild is waiting.</h3><p>No Kenya sightings are available yet. Return soon to discover new encounters.</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p>Total: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<form class=\"search-bar\" role=\"search\" hidden data-sighting-search><label for=\"animal-search\">Find your moment</label><input id=\"animal-search\" name=\"q\" type=\"search\" placeholder=\"Search animals, places or observers…\" autocomplete=\"off\"><button type=\"reset\">Clear</button><output id=\"search-count\" aria-live=\"polite\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(len(sightings))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/views/pages/home.templ`, Line: 17, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/views/pages/home.templ`, Line: 24, Col: 341}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><ul class=\"sightings\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " sightings</output></form><ul class=\"sightings\" id=\"sighting-list\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				for _, s := range sightings {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<li data-search=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var4 string
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(components.SearchText(s))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/views/pages/home.templ`, Line: 27, Col: 49}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -83,21 +96,23 @@ func Home(sightings []sighting.Sighting) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</li>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</li>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</ul>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</ul><p class=\"empty-state\" id=\"no-matches\" hidden>No sightings match your search. Try another animal or place.</p><p class=\"data-note\">Showing up to 120 recent Kenya observations. Wildlife is wonderfully unpredictable; sightings are records, never promises.</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></section><section id=\"discover\" class=\"invitation wrap section\"><div class=\"invitation-art\" aria-hidden=\"true\"><span class=\"sun\"></span><span class=\"mountain mountain-back\"></span><span class=\"mountain\"></span><span class=\"art-label\">THE SPIRIT OF EXPLORATION</span></div><div><p class=\"eyebrow\">LET CURIOSITY LEAD THE WAY</p><h2>Your next great story<br>starts with <em>wonder.</em></h2><p>Follow an animal that fascinates you. Discover a place you’ve never heard of. Let these encounters be the beginning of your Kenya story.</p><a class=\"button\" href=\"#sightings\">Discover your Kenya <span aria-hidden=\"true\">↗</span></a></div></section>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return nil
 		})
-		templ_7745c5c3_Err = layout.Base(layout.BaseProps{
-			Title: "Sightings",
-		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Base(layout.BaseProps{Title: "Magical Kenya — A world of wonder"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
